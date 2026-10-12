@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-border: #d1d5db;
+        }
+
+        body.dark-theme {
+            --bg-color: #0f172a;       
+            --card-bg: #1e293b;        
+            --header-bg: #1e293b;     
+            --text-color: #f8fafc;     
+            --text-muted: #94a3b8;     
+            --border-color: #334155;   
+            --input-border: #475569;   
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-top: 100px;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+        .theme-toggle-btn:hover {
+            background-color: var(--bg-color);
+        }
+
+        .profile-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .header-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #3b82f6;
+            object-fit: cover;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background-color: var(--card-bg);
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 10px 0;
+            z-index: 1001;
+            border: 1px solid var(--border-color);
+        }
+        .profile-menu-container:hover .dropdown-menu {
+            display: block;
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            text-align: left;
+            color: var(--text-color);
+            text-decoration: none;
+            background: none;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .dropdown-item:hover {
+            background-color: var(--bg-color);
+            color: #3b82f6;
+        }
+        .dropdown-item.logout-btn {
+            color: #ef4444;
+            border-top: 1px solid var(--border-color);
+            margin-top: 5px;
+            padding-top: 15px;
+        }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        .modal-content input[type="text"], 
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--input-border);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+        }
+        .btn-save {
+            width: 100%;
+            padding: 10px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-save:hover {
+            background-color: #2563eb;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="logo">
+            <a href="/dashboard">Панель управления</a>
+        </div>
+
+        <div class="header-right">
+            <button class="theme-toggle-btn" id="themeToggle">🌓</button>
+
+            <div class="profile-menu-container">
+                <img class="header-avatar" src="/user-avatar-image" alt="Аватар">
+                
+                <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" onclick="openModal()">⚙️ Настройки профиля</button>
+                    
+                    <form action="/logout" method="POST" style="margin: 0;">
+                        <button type="submit" class="dropdown-item logout-btn">Выйти из аккаунта</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">✕</button>
+            <h3>Настройки профиля</h3>
+            
+            <form action="/update-profile-full" method="POST" enctype="multipart/form-data">
+                <label>Иконка профиля:</label>
+                <input type="file" name="avatar" accept="image/*" style="margin-bottom: 15px; color: var(--text-color);"><br>
+
+                <label>Имя пользователя:</label>
+                <input type="text" name="new_username" value="CURRENT_USERNAME" required>
+
+                <label>Описание аккаунта (О себе):</label>
+                <textarea name="bio" placeholder="Расскажите о себе...">CURRENT_BIO</textarea>
+
+                <button type="submit" class="btn-save">Сохранить всё</button>
+            </form>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <h1>Добро пожаловать в личный кабинет!</h1>
+        <p style="margin-top: 10px;">Вы успешно авторизованы в системе.</p>
+    </main>
+
+    <script>
+        function openModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('settingsModal').style.display = 'none'; }
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target == modal) { closeModal(); }
+        }
+
+        const themeToggleBtn = document.getElementById('themeToggle');
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            if (document.body.classList.contains('dark-theme')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!-- Игровая статистика аккаунта -->
+<div class="game-stats-container">
+    <div class="game-stat-card">
+        <span class="game-stat-icon">🏆</span>
+        <div>
+            <div class="game-stat-label">Игровые очки</div>
+            <div class="game-stat-value" id="display-score"><!-- GAME_SCORE --></div>
+        </div>
+    </div>
+    <div class="game-stat-card">
+        <span class="game-stat-icon">🔥</span>
+        <div>
+            <div class="game-stat-label">Серия дней</div>
+            <div class="game-stat-value"><!-- STREAK --> дней подряд</div>
+        </div>
+    </div>
+</div>
+
+<!-- Игровая зона -->
+<div class="gaming-zone">
+    <h2>🎮 Игровая комната</h2>
+    <p>Выбирайте мини-игру и зарабатывайте очки на свой аккаунт!</p>
+    
+    <div class="game-tabs">
+        <button class="game-tab-btn active" onclick="switchGame('clicker')">🖱️ Кликер монет</button>
+        <button class="game-tab-btn" onclick="switchGame('guess')">🔢 Угадай число</button>
+    </div>
+
+    <!-- ИГРА 1: КЛИКЕР (ОБНОВЛЕННАЯ РАЗМЕТКА) -->
+<div id="game-clicker" class="game-window">
+    <h3>Кликни по монетке, чтобы заработать очки!</h3>
+    <!-- Добавили кнопку-обертку, чтобы клик точно срабатывал на любых устройствах -->
+    <button id="coin" onclick="playClicker()" style="background:none; border:none; font-size:80px; cursor:pointer; display:inline-block; user-select:none; margin:15px 0;">🪙</button>
+    <p>Заработано очков за клик-сессию: <strong id="clicker-session">0</strong></p>
+</div>
+
+
+    <!-- ИГРА 2: УГАДАЙ ЧИСЛО -->
+    <div id="game-guess" class="game-window" style="display:none;">
+        <h3>Угадай число от 1 до 10</h3>
+        <input type="number" id="guess-input" min="1" max="10" placeholder="Ваш вариант">
+        <button onclick="playGuessNumber()">Проверить</button>
+        <p id="guess-message">Введите число и нажмите Проверить</p>
+    </div>
+</div>
+<!-- ТАБЛИЦА ЛИДЕРОВ -->
+<div class="leaderboard-zone" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-top: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: Arial, sans-serif;">
+    <h2>🏆 Зал славы (Топ игроков)</h2>
+    <p>Здесь отображаются лучшие пользователи по количеству очков!</p>
+    
+    <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; text-align: left;">
+        <thead>
+            <tr style="background: #f4f6f9; border-bottom: 2px solid #cbd5e0;">
+                <th style="padding: 12px; color: #4a5568;">Место</th>
+                <th style="padding: 12px; color: #4a5568;">Имя пользователя</th>
+                <th style="padding: 12px; color: #4a5568;">Роль</th>
+                <th style="padding: 12px; color: #4a5568; text-align: right;">Очки</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-rows">
+            <!-- Сюда JavaScript вставит строки автоматически -->
+            <tr>
+                <td colspan="4" style="padding: 20px; text-align: center; color: #718096;">Загрузка лидеров...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // 1. НАДЁЖНАЯ ФУНКЦИЯ ЗАГРУЗКИ ТАБЛИЦЫ ЛИДЕРОВ
+function loadLeaderboard() {
+    const tableBody = document.getElementById('leaderboard-rows');
+    if (!tableBody) return;
+
+    fetch('/api/leaderboard')
+        .then(res => {
+            if (!res.ok) throw new Error('Сервер вернул ошибку');
+            return res.json();
+        })
+        .then(data => {
+            if (data.success && data.leaders && data.leaders.length > 0) {
+                tableBody.innerHTML = ''; // Очищаем строку загрузки
+                
+                data.leaders.forEach((player, index) => {
+                    let rank = index + 1;
+                    if (rank === 1) rank = '🥇 1';
+                    else if (rank === 2) rank = '🥈 2';
+                    else if (rank === 3) rank = '🥉 3';
+
+                    const row = `
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 12px; font-weight: bold;">${rank}</td>
+                            <td style="padding: 12px; color: #2d3748; font-weight: 500;">${player.username}</td>
+                            <td style="padding: 12px;"><span style="background: #edf2f7; padding: 4px 8px; border-radius: 4px; font-size: 13px;">${player.role || 'Пользователь'}</span></td>
+                            <td style="padding: 12px; text-align: right; font-weight: bold; color: #3182ce;">${player.game_score}</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="4" style="padding: 20px; text-align: center; color: #a0aec0;">Пока никто не набрал очки. Станьте первым!</td></tr>`;
+            }
+        })
+        .catch(err => {
+            console.error('Ошибка топ-листа:', err);
+            tableBody.innerHTML = `<tr><td colspan="4" style="padding: 20px; text-align: center; color: #e53e3e;">Ошибка загрузки топа</td></tr>`;
+        });
+}
+
+// 2. ИСПРАВЛЕННАЯ ЕДИНАЯ ФУНКЦИЯ ОТПРАВКИ ОЧКОВ
+function sendScoreToBackend(points) {
+    fetch('/api/save-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: points })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Ошибка сессии или сервера');
+        return res.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Обновляем очки на экране
+            document.getElementById('display-score').innerText = data.newScore;
+            // Сразу же обновляем таблицу лидеров, чтобы увидеть себя на новом месте
+            loadLeaderboard();
+        }
+    })
+    .catch(err => {
+        console.warn('Локальное сохранение. Ошибка отправки на сервер:', err);
+    });
+}
+
+// Автоматический запуск загрузки таблицы при старте страницы
+document.addEventListener('DOMContentLoaded', loadLeaderboard);
+
+// Переключение вкладок игр
+function switchGame(gameType) {
+    document.querySelectorAll('.game-window').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.game-tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    if (gameType === 'clicker') {
+        document.getElementById('game-clicker').style.display = 'block';
+        event.target.classList.add('active');
+    } else if (gameType === 'guess') {
+        document.getElementById('game-guess').style.display = 'block';
+        event.target.classList.add('active');
+        initGuessGame();
+    }
+}
+
+// Отправка очков на бэкенд без перезагрузки
+function sendScoreToBackend(points) {
+    fetch('/api/save-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: points })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('display-score').innerText = data.newScore;
+        }
+    });
+}
+
+// 1. ИГРА: КЛИКЕР
+// 1. УЛУЧШЕННАЯ ЛОГИКА КЛИКЕРА (Мгновенное начисление)
+// НАДЕЖНАЯ ЛОГИКА КЛИКЕРА
+let clickerSessionPoints = 0; // Создаем явную переменную для сессии
+
+function playClicker() {
+    // 1. Увеличиваем счетчик сессии локально
+    clickerSessionPoints += 1;
+    
+    // 2. Проверяем, существуют ли элементы на странице, прежде чем выводить текст
+    const sessionEl = document.getElementById('clicker-session');
+    const scoreEl = document.getElementById('display-score');
+    
+    if (sessionEl) {
+        sessionEl.innerText = clickerSessionPoints;
+    }
+    
+    if (scoreEl) {
+        // Мгновенно прибавляем визуальное очко к общему балансу на экране
+        let currentTotal = parseInt(scoreEl.innerText) || 0;
+        scoreEl.innerText = currentTotal + 1;
+    }
+    
+    // 3. Отправляем 1 очко на бэкенд в базу данных
+    sendScoreToBackend(1);
+}
+
+
+// 2. БЕЗОПАСНАЯ ОТПРАВКА НА БЭКЕНД
+function sendScoreToBackend(points) {
+    fetch('/api/save-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: points })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Ошибка сервера');
+        return res.json();
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById('display-score').innerText = data.newScore;
+        }
+    })
+    .catch(err => {
+        console.warn('Очки сохранены локально, но сервер временно недоступен:', err);
+    });
+}
+
+
+// 2. ИГРА: УГАДАЙ ЧИСЛО
+let targetNumber = 0;
+function initGuessGame() {
+    targetNumber = Math.floor(Math.random() * 10) + 1;
+    document.getElementById('guess-message').innerText = "Я загадал число от 1 до 10. Попробуй угадать!";
+    document.getElementById('guess-input').value = '';
+}
+
+function playGuessNumber() {
+    const userGuess = parseInt(document.getElementById('guess-input').value);
+    const messageEl = document.getElementById('guess-message');
+    
+    if (isNaN(userGuess) || userGuess < 1 || userGuess > 10) {
+        messageEl.innerText = "Введите корректное число от 1 до 10!";
+        return;
+    }
+    
+    if (userGuess === targetNumber) {
+        messageEl.style.color = 'green';
+        messageEl.innerText = "🎉 Верно! Вы получили 15 очков!";
+        sendScoreToBackend(15); // Начисляем 15 очков за победу
+        setTimeout(initGuessGame, 2000); // Перезапуск через 2 секунды
+    } else if (userGuess < targetNumber) {
+        messageEl.style.color = 'red';
+        messageEl.innerText = "❌ Загаданное число больше!";
+    } else {
+        messageEl.style.color = 'red';
+        messageEl.innerText = "❌ Загаданное число меньше!";
+    }
+}
+</script>
+

@@ -1,0 +1,15 @@
+meta:
+  environment: nodejs
+  toolchain:
+    name: npm
+    version: 20
+build:
+  requirements:
+    - package.json
+  steps:
+    - npm install
+run:
+  script: node server.js
+  persistence:
+    - database.db
+    - uploads/

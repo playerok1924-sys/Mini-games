@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <style>
+        /* Стили для сброса отступов по умолчанию */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            padding-top: 80px; /* Отступ сверху, чтобы шапка не перекрывала контент */
+        }
+
+        /* КРАСИВАЯ ШАПКА (HEADER) */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            z-index: 1000;
+        }
+
+        /* Логотип */
+        .logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        /* Ссылки меню */
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        /* Кнопки входа в шапке */
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-login {
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .btn-login:hover {
+            background-color: #eff6ff;
+        }
+
+        .btn-register {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-register:hover {
+            background-color: #2563eb;
+        }
+
+        /* Стили для контента (форм) */
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #059669;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: 0;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- НАЧАЛО ШАПКИ -->
+    <header class="site-header">
+        <div class="logo">
+            <a href="/">INN rate</a>
+        </div>
+        
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/">Главная</a></li>
+            </ul>
+        </nav>
+
+        <div class="auth-buttons">
+            <!-- Ссылки-якоря, которые будут прокручивать страницу к нужной форме -->
+            <a href="#login-section" class="btn btn-login">Войти</a>
+            <a href="#register-section" class="btn btn-register">Регистрация</a>
+        </div>
+    </header>
+    <!-- КОНЕЦ ШАПКИ -->
+
+    <!-- Основной контент сайта, обернутый в аккуратные блоки -->
+    <div class="container" id="register-section">
+        <h2>Форма регистрации</h2>
+        <form action="/register" method="POST">
+            <input type="text" name="username" placeholder="Имя пользователя" required>
+            <input type="email" name="email" placeholder="Электронная почта" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit" style="background-color: #3b82f6;">Зарегистрироваться</button>
+        </form>
+    </div>
+
+    <div class="container" id="login-section">
+        <h2>Вход в аккаунт</h2>
+        <form action="/login" method="POST">
+            <input type="email" name="email" placeholder="Электронная почта" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Настройки профиля (Смена имени)</h2>
+        <p style="margin-bottom: 15px; color: #6b7280; font-size: 14px;">Сначала войдите в аккаунт, чтобы изменить имя.</p>
+        <form action="/update-profile" method="POST">
+            <input type="text" name="new_username" placeholder="Новое имя" required>
+            <button type="submit" style="background-color: #4b5563;">Сохранить изменения</button>
+        </form>
+    </div>
+
+</body>
+</html>
+
+<!-- Блок статистики аккаунта -->
+<div id="stats-section" class="stats-container hidden">
+  <h2 class="stats-title">Статистика вашего аккаунта</h2>
+  
+  <div class="stats-grid">
+    <!-- Карточка 1 -->
+    <div class="stat-card">
+      <div class="stat-icon">🕒</div>
+      <div class="stat-info">
+        <span class="stat-label">Дней на сайте</span>
+        <span id="stat-days" class="stat-value">0</span>
+      </div>
+    </div>
+
+    <!-- Карточка 2 -->
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <span class="stat-label">Выполнено действий</span>
+        <span id="stat-actions" class="stat-value">0</span>
+      </div>
+    </div>
+
+    <!-- Карточка 3 -->
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-info">
+        <span class="stat-label">Текущий уровень</span>
+        <span id="stat-level" class="stat-value">Новичок</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Блок Ежедневной серии (Стрик) -->
+<div id="streak-container" class="streak-card hidden">
+  <div class="streak-fire-icon">🔥</div>
+  <div class="streak-info">
+    <div class="streak-count-wrapper">
+      <span id="streak-count" class="streak-number">0</span> 
+      <span class="streak-text">дней подряд!</span>
+    </div>
+    <p id="streak-message" class="streak-subtext">Зайдите завтра, чтобы не потерять серию!</p>
+  </div>
+</div>
